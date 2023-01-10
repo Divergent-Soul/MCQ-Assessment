@@ -1,0 +1,81 @@
+<template>
+    <div class="slds-card">
+        <div class="slds-align_absolute-center">
+
+            <!-- Assessment Page -->
+            <template if:false={showResult}>
+                <div class="slds-box slds-card" style="width: 60%; font-size: 12pt; margin: 2%;">
+                    <div class="slds-scrollable" style="height: 700px;">
+                        <template for:each={filteredData} for:item="qus">
+                            <div key={qus.Id} data-id={qus.Label} class="slds-box" style="margin: 1%;">
+                                <span style="font-weight: bold;">{qus.serial}. {qus.question__c}</span>
+                                <div style="margin-left: 2%;">
+                                    <template for:each={qus.mcqanswers__r} for:item="ans">
+                                        <div key={qus.Id} style="margin-top: 1px; margin-bottom:1px">
+                                            <lightning-input type="checkbox" name={qus.Label} value={ans.Label} label={ans.Option__c} onchange={handleOnchange}></lightning-input>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                    <div style="text-align: center; margin: 1%">
+                        <pre>
+                            <a href="javascript:void(0)" name="previous" style="margin-right: 5%;" onclick={handlePageNavigation}>Previous</a>{pageNumber} of {maxPage}<a href="javascript:void(0)" name="next" style="margin-left: 5%;" onclick={handlePageNavigation}>Next</a>
+                        </pre>
+                    </div>
+                    <div>
+                        <pre><span>Questions Per Page:&nbsp;<input type="number" min="1" max={qusCount} value={qpp} onchange={qppHandleChange}></input></span><template if:true={showSubmit}><lightning-button style="float: right;" variant="brand" label="Submit" onclick={onSubmit} class="slds-m-left_x-small"></lightning-button></template></pre>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Result Page -->
+            <template if:true={showResult}>
+                <div class="slds-box slds-card" style="width: 60%; font-size: 12pt; margin: 2%;">
+                    <template if:true={showCongrats}>
+                        <img src="https://d1csarkz8obe9u.cloudfront.net/posterpreviews/congratulations-banner-design-template-5e9948a08ef063ed13ccf6280a8ed757_screen.jpg?ts=1561483144" alt="">
+                        <div style="text-align: center; font-size: 14pt;">
+                            You have <span style="font-size: 16pt; font-weight: bold;">{result}</span> the assessment successfully!<br/>
+                            <span style="font-size: 12pt;">Wish you all success and glad for your tremendous career growth!</span><br/><br/><br/>
+                        </div>
+                    </template>
+                    <template if:false={showCongrats}>
+                        <div style="text-align: center; font-size: 14pt;">
+                            Unfortunately you have <span style="font-size: 16pt; font-weight: bold;">{result}</span> the assessment!<br/>
+                            <span style="font-size: 12pt;">Do prepare well and retake the assessment later.</span><br/>
+                            <span style="font-size: 12pt;">All the Best!!.</span><br/><br/><br/>
+                        </div>    
+                    </template>
+
+                    <lightning-accordion class="example-accordion" active-section-name="B">
+                        <lightning-accordion-section name="B" label="Result">
+                            <div class="slds-box" style="margin: 1%; font-size: 12pt;">
+                                <span style="font-weight: bold;">Total No. of Questions:</span> {totalQus}<br/>
+                                <span style="font-weight: bold;">No. of Questions not attended:</span> {notAns}<br/>
+                                <span style="font-weight: bold;">Percentage:</span> {percent}<br/>
+                            </div>
+                        </lightning-accordion-section>
+                        <lightning-accordion-section name="A" label="You can refer the answers here">
+                            <div class="slds-scrollable">
+                                <template for:each={allResultData} for:item="qus">
+                                    <div key={qus.Id} data-id={qus.Label} class="slds-box" style="margin: 1%;">
+                                        <span style="font-weight: bold;">{qus.serial}. {qus.question__c}</span>
+                                        <div style="margin-left: 2%;">
+                                            <template for:each={qus.mcqanswers__r} for:item="ans">
+                                                <div key={qus.Id} style = "padding: 1%;">
+                                                    <lightning-input type="checkbox" name={qus.Label} value={ans.Label} label={ans.Option__c} disabled></lightning-input>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </lightning-accordion-section>
+                    </lightning-accordion>
+                </div>
+            </template>
+            
+        </div>
+    </div>
+</template>
